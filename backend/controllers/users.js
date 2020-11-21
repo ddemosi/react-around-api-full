@@ -2,16 +2,15 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
-const { AuthorizationRequiredError } = require('../errors/authorization-required-error');
 const { NotFoundError } = require('../errors/not-found-error');
 const { BadRequestError } = require('../errors/bad-request-error');
-const { InternalServerError } = require('../errors/internal-server-error');
+const { ValidationError } = require('../errors/validation-error');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
 const User = require('../models/user.js');
 
-function getUsers(req, res) {
+function getUsers(req, res, next) {
   User.find({})
     .then((users) => {
       if (users === undefined) {
@@ -19,12 +18,10 @@ function getUsers(req, res) {
       }
       res.status(200).send(users);
     })
-    .catch(() => {
-      res.status(500).send({ message: 'Internal error' });
-    });
+    .catch(next);
 }
 
-function getUserById(req, res) {
+function getUserById(req, res, next) {
   const { id } = req.params;
   User.findById(id)
     .then((user) => {
@@ -34,16 +31,10 @@ function getUserById(req, res) {
         throw new NotFoundError('Could not find user with that id');
       }
     })
-    .catch((err) => {
-      if (err.name === 'CastError') {
-        res.status(400).send({ message: 'Improper data format' });
-      } else {
-        res.status(500).send({ message: 'Internal Error' });
-      }
-    });
+    .catch(next);
 }
 
-function createUser(req, res) {
+function createUser(req, res, next) {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
       const body = {
@@ -56,87 +47,74 @@ function createUser(req, res) {
 
       User.create(body).select('+password')
         .then((result) => {
-          if (result) {
-            res.status(200).send({ data: result });
+          if (!result) {
+            throw new BadRequestError('Invalid data submitted');
           }
+          res.status(200).send({ data: result });
         })
-        .catch((err) => {
-          if (err.name === 'ValidationError') {
-            res.status(400).send({ message: 'User validation failed' });
-          } else {
-            res.status(500).send({ message: 'Internal server error' });
-          }
-        });
+        .catch(next);
     });
 }
 
-function updateUserInfo(req, res) {
+function updateUserInfo(req, res, next) {
   const { name, about } = req.body;
   const id = req.user._id;
   User.findByIdAndUpdate(id, { name, about })
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
+      if (!data) {
+        throw new NotFoundError('No user with that ID');
       }
+      res.status(200).send(data);
     })
-    .catch(() => {
-      res.status(500).send({ message: 'Internal Error' });
-    });
+    .catch(next);
 }
 
-function updateUserAvatar(req, res) {
+function updateUserAvatar(req, res, next) {
   const { avatar } = req.body;
   const id = req.user._id;
   User.findByIdAndUpdate(id, { avatar })
     .then((data) => {
-      if (data) {
-        res.status(200).send(data);
+      if (!data) {
+        throw new NotFoundError('No user with that ID');
       }
+      res.status(200).send(data);
     })
-    .catch(() => {
-      res.status(500).send({ message: 'Internal Error' });
-    });
+    .catch(next);
 }
 
-function getCurrentUserInfo(req, res) {
-  User.findOne(req.user._id)
+function getCurrentUserInfo(req, res, next) {
+  User.findbyId(req.user._id)
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Something went wrong...'));
+        throw new NotFoundError('User not found');
       }
       res.status(200).send(user);
     })
-    .catch((err) => {
-      res.status(500).send(err.message);
-    });
+    .catch(next);
 }
 
-function login(req, res) {
+function login(req, res, next) {
   const { email, password } = req.body;
 
   User.findOne({ email }).select('+password')
     .then((user) => {
       if (!user) {
-        return Promise.reject(new Error('Incorrect email or password'));
+        throw new ValidationError('Incorrect email or password');
       }
       return user;
     })
     .then((user) => {
       const compare = bcrypt.compare(password, user.password);
       if (!compare) {
-        return Promise.reject(new Error('Incorrect email or password'));
+        throw new ValidationError('Incorrect email or password');
       }
       const token = jwt.sign(
         { _id: user._id },
-        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret'
+        NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
       res.status(200).send({ token });
     })
-    .catch((err) => {
-      res
-        .status(401)
-        .send({ message: err.message });
-    });
+    .catch(next);
 }
 
 module.exports = {

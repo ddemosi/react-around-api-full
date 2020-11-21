@@ -27,7 +27,7 @@
 const apiEndpointsCards = {
   url: "http://danny-demosi.students.nomoreparties.site",
     headers: { 
-      authorization: "98dd8ac9-99ea-4ab0-85f9-6d61f9934e14",
+      // authorization: "98dd8ac9-99ea-4ab0-85f9-6d61f9934e14",
      "Content-Type": "application/json"
      }
 }

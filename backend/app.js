@@ -1,13 +1,23 @@
 const express = require('express');
-const path = require('path');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 
 const jsonParser = bodyParser.json();
 const {
   login, createUser,
 } = require('./controllers/users');
 const auth = require('./middlewares/auth');
+const { requestLogger, errorLogger } = require('./middlewares/logger');
+// route imports
+const getCards = require('./routes/cards');
+const getUser = require('./routes/users');
+const { NotFoundError } = require('./errors/not-found-error');
+
+const corsOption = {
+  origin: '*',
+  optionsSuccessStatus: 200,
+};
 
 // connect to db
 mongoose.connect('mongodb://localhost:27017/aroundb', {
@@ -17,14 +27,17 @@ mongoose.connect('mongodb://localhost:27017/aroundb', {
   useUnifiedTopology: true,
 });
 
-// route imports
-const getCards = require('./routes/cards');
-const getUser = require('./routes/users');
-
 // listen to port 3000
 const { PORT = 3000 } = process.env;
 
 const app = express();
+
+app.use(jsonParser, cors(corsOption));
+app.use(requestLogger);
+
+app.options('*', cors());
+
+// ROUTES
 
 app.use('/', auth, getCards);
 
@@ -34,8 +47,18 @@ app.post('/signin', jsonParser, login);
 
 app.post('/signup', jsonParser, createUser);
 
-app.use('*', (req, res) => {
-  res.status(404).send({ message: '404 resource could not be found' });
+// catch all unmatched routes
+
+app.use('*', () => {
+  throw new NotFoundError('Resource could not be found');
+});
+
+app.use(errorLogger);
+app.use((err, req, res) => {
+  const { statusCode = 500, message } = err;
+  res.staus(statusCode).send({
+    message: statusCode === 500 ? 'Internal server error' : message,
+  });
 });
 
 app.listen(PORT, () => {

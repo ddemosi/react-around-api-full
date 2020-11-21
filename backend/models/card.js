@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const validation = require('validator');
 
 const cardSchema = new mongoose.Schema({
   name: {
@@ -11,7 +12,7 @@ const cardSchema = new mongoose.Schema({
     type: String,
     validate: {
       validator(v) {
-        return /[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)?/gi.test(v);
+        return validation.isURL(v, [{ allow_underscores: true }]);
       },
       message: 'Invalid URL',
     },
@@ -24,6 +25,7 @@ const cardSchema = new mongoose.Schema({
   },
   likes: {
     type: Array,
+    ref: 'user',
     default: [],
   },
   createdAt: {

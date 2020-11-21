@@ -3,7 +3,6 @@ const bodyParser = require('body-parser');
 const {
   getUsers, getUserById, updateUserAvatar, updateUserInfo, getCurrentUserInfo,
 } = require('../controllers/users');
-const { auth } = require('../middlewares/auth');
 
 const jsonParser = bodyParser.json();
 
@@ -11,7 +10,7 @@ router.get('/users', getUsers);
 
 router.get('/users/:id', getUserById);
 
-router.get('users/me', auth, getCurrentUserInfo);
+router.get('users/me', getCurrentUserInfo);
 
 router.patch('/users/me', jsonParser, updateUserInfo);
 
