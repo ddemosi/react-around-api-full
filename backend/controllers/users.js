@@ -1,14 +1,15 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+const isEmail = require('validator/lib/isEmail');
 
-const { NotFoundError } = require('../errors/not-found-error');
-const { BadRequestError } = require('../errors/bad-request-error');
-const { ValidationError } = require('../errors/validation-error');
+const NotFoundError = require('../errors/not-found-error');
+const BadRequestError = require('../errors/bad-request-error');
+const ValidationError = require('../errors/validation-error');
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
-const User = require('../models/user.js');
+const User = require('../models/user');
 
 function getUsers(req, res, next) {
   User.find({})
@@ -21,7 +22,7 @@ function getUsers(req, res, next) {
     .catch(next);
 }
 
-function getUserById(req, res, next) {
+function getUserById (req, res, next) {
   const { id } = req.params;
   User.findById(id)
     .then((user) => {
@@ -45,7 +46,10 @@ function createUser(req, res, next) {
         password: hash,
       };
 
-      User.create(body).select('+password')
+      if (!isEmail(req.body.email)) {
+        throw new BadRequestError('Email is not in proper format');
+      }
+      User.create(body)
         .then((result) => {
           if (!result) {
             throw new BadRequestError('Invalid data submitted');
@@ -53,7 +57,8 @@ function createUser(req, res, next) {
           res.status(200).send({ data: result });
         })
         .catch(next);
-    });
+    })
+    .catch(next);
 }
 
 function updateUserInfo(req, res, next) {
@@ -69,7 +74,7 @@ function updateUserInfo(req, res, next) {
     .catch(next);
 }
 
-function updateUserAvatar(req, res, next) {
+function updateUserAvatar (req, res, next) {
   const { avatar } = req.body;
   const id = req.user._id;
   User.findByIdAndUpdate(id, { avatar })
@@ -82,7 +87,7 @@ function updateUserAvatar(req, res, next) {
     .catch(next);
 }
 
-function getCurrentUserInfo(req, res, next) {
+function getCurrentUserInfo (req, res, next) {
   User.findbyId(req.user._id)
     .then((user) => {
       if (!user) {
@@ -93,21 +98,17 @@ function getCurrentUserInfo(req, res, next) {
     .catch(next);
 }
 
-function login(req, res, next) {
+function login (req, res, next) {
   const { email, password } = req.body;
 
-  User.findOne({ email }).select('+password')
+  User.findUserByCredentials(email, password)
     .then((user) => {
       if (!user) {
-        throw new ValidationError('Incorrect email or password');
+        throw new ValidationError('Email does not exist');
       }
       return user;
     })
     .then((user) => {
-      const compare = bcrypt.compare(password, user.password);
-      if (!compare) {
-        throw new ValidationError('Incorrect email or password');
-      }
       const token = jwt.sign(
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
