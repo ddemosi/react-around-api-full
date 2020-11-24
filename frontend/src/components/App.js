@@ -6,7 +6,7 @@ import Main from './Main.js';
 import Footer from './Footer.js';
 import ImagePopup from './ImagePopup.js';
 import { CurrentUserContext } from '../contexts/CurrentUserContext.js';
-import { api } from '../utils/Api.js';
+import Api from '../utils/Api.js';
 import { authApi } from '../utils/Auth';
 import EditProfilePopup from './EditProfilePopup';
 import EditAvatarPopup from './EditAvatarPopup';
@@ -40,6 +40,45 @@ function App () {
     const [email, setEmail] = useState("");
     const [hamburger, toggleHamburgerState] = useState(false);
 
+    // Project 15 states
+    const [token, setToken] = useState("");
+
+    // API initialization
+    const api = new Api({
+        url: "http://localhost:3000",
+        headers: {
+            authorization: `Bearer ${token}`,
+            'Content-Type': 'application/json',
+        }
+    })
+
+    // API request to verify JWT
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            authApi.checkToken(localStorage.getItem('token'))
+                .then((res) => {
+                    if (res.status === 400) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('email');
+                        return Promise.reject(new Error('No token or improper format'));
+                    } else if (res.status === 401) {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('email');
+                        return Promise.reject(new Error('Invalid token'));
+                    } else {
+                        toggleLoggedIn(true);
+                        setEmail(localStorage.getItem('email'));
+                        setToken(localStorage.getItem('token'));
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                })
+        } else {
+            return
+        }
+    }, []);
+
     // Project 14 new functions
     // API request for login
 
@@ -59,7 +98,9 @@ function App () {
                 setEmail(email);
                 localStorage.setItem('email', email);
                 localStorage.setItem('token', data.token);
+                setToken(data.token);
             })
+                .then()
             .catch((err) => {
                 console.log(err);
             })
@@ -133,12 +174,13 @@ function App () {
     function onAddPlace (name, link) {
         toggleSaveText(true);
         api.addCard({ name: name, link: link }).then((card) => {
+            console.log(card);
             const newCard = {
                 name: card.name,
                 link: card.link,
                 likes: card.likes,
                 id: card._id,
-                ownerId: card.owner._id
+                ownerId: card.owner._id,
             }
             setCards([...cards, newCard]);
         }).then(() => {
@@ -229,32 +271,6 @@ function App () {
             return false
         }
     }
-
-    // API request to verify JWT
-    useEffect(() => {
-        if (localStorage.getItem('token')) {
-            authApi.checkToken(localStorage.getItem('token'))
-                .then((res) => {
-                    if (res.status === 400) {
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('email');
-                        return Promise.reject(new Error('No token or improper format'));
-                    } else if (res.status === 401) {
-                        localStorage.removeItem('token');
-                        localStorage.removeItem('email');
-                        return Promise.reject(new Error('Invalid token'));
-                    } else {
-                        toggleLoggedIn(true);
-                        setEmail(localStorage.getItem('email'));
-                    }
-                })
-                .catch((err) => {
-                    console.log(err);
-                })
-        } else {
-            return
-        }
-    }, []);
 
     //API request for User Info
     useEffect(() => {

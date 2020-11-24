@@ -25,7 +25,8 @@
 // const removeCardID = document.querySelector('.form__card-id');
 // //api data
 const apiEndpointsCards = {
-  url: "http://api.danny-demosi.students.nomoreparties.site",
+  // url: "http://api.danny-demosi.students.nomoreparties.site",
+  url: "http://localhost:3000",
     headers: { 
       // authorization: "98dd8ac9-99ea-4ab0-85f9-6d61f9934e14",
      "Content-Type": "application/json"
@@ -33,7 +34,8 @@ const apiEndpointsCards = {
 }
 
 const apiEndpointsRegister = {
-  url:"http://api.danny-demosi.students.nomoreparties.site",
+  // url:"http://api.danny-demosi.students.nomoreparties.site",
+  url: "http://localhost:3000",
   headers:{
     "Content-Type": "application/json",
   },

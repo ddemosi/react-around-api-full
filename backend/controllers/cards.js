@@ -1,8 +1,8 @@
 const Card = require('../models/card.js');
 
-const { AuthorizationRequiredError } = require('../errors/authorization-required-error');
-const { NotFoundError } = require('../errors/not-found-error');
-const { BadRequestError } = require('../errors/bad-request-error.js');
+const AuthorizationRequiredError = require('../errors/authorization-required-error');
+const NotFoundError = require('../errors/not-found-error');
+const BadRequestError = require('../errors/bad-request-error.js');
 
 const getCards = (req, res, next) => Card.find({})
   .then((cards) => {
@@ -23,7 +23,7 @@ function createCard(req, res, next) {
       if (!result) {
         throw new BadRequestError('Invalid data submitted');
       }
-      res.status(200).send({ data: result });
+      res.status(200).send(result);
     })
     .catch(next);
 }

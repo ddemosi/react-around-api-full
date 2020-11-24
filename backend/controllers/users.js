@@ -22,7 +22,7 @@ function getUsers(req, res, next) {
     .catch(next);
 }
 
-function getUserById (req, res, next) {
+function getUserById(req, res, next) {
   const { id } = req.params;
   User.findById(id)
     .then((user) => {
@@ -74,7 +74,7 @@ function updateUserInfo(req, res, next) {
     .catch(next);
 }
 
-function updateUserAvatar (req, res, next) {
+function updateUserAvatar(req, res, next) {
   const { avatar } = req.body;
   const id = req.user._id;
   User.findByIdAndUpdate(id, { avatar })
@@ -87,8 +87,8 @@ function updateUserAvatar (req, res, next) {
     .catch(next);
 }
 
-function getCurrentUserInfo (req, res, next) {
-  User.findbyId(req.user._id)
+function getCurrentUserInfo(req, res, next) {
+  User.findById(req.user._id)
     .then((user) => {
       if (!user) {
         throw new NotFoundError('User not found');
@@ -98,7 +98,7 @@ function getCurrentUserInfo (req, res, next) {
     .catch(next);
 }
 
-function login (req, res, next) {
+function login(req, res, next) {
   const { email, password } = req.body;
 
   User.findUserByCredentials(email, password)
@@ -113,6 +113,10 @@ function login (req, res, next) {
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
+      res.cookie('jwt', token, {
+        maxAge: 3600000 * 24 * 7,
+        httpOnly: true,
+      });
       res.status(200).send({ token });
     })
     .catch(next);

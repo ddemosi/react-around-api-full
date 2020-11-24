@@ -9,6 +9,15 @@ class Api {
   _checkResponse(res) {
     return (res.ok ? res.json() : Promise.reject(`Error: ${res.status}`));
   }
+
+  setHeader(auth) {
+    this._auth = {
+      "Authorization": `Bearer ${auth}`,
+      "Content-Type": "application/json"
+    }
+    return
+  }
+
   getUserInfo() {
       return fetch(`${this._apiEndpoint}/users/me`, {
       headers: this._auth
@@ -86,6 +95,4 @@ class Api {
 
 
 
-const api = new Api(apiEndpointsCards);
-
-export {api};
+export default Api;

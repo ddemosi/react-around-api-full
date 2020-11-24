@@ -4,16 +4,16 @@ const {
   getCards, createCard, deleteCard, addCardLike, removeCardLike,
 } = require('../controllers/cards');
 
-const jsonParser = bodyParser.json();
+// const jsonParser = bodyParser.json();
 
 router.get('/cards', getCards);
 
-router.post('/cards', jsonParser, createCard);
+router.post('/cards', createCard);
 
-router.delete('/cards/:cardId', jsonParser, deleteCard);
+router.delete('/cards/:cardId', deleteCard);
 
-router.put('/cards/:cardId/likes', jsonParser, addCardLike);
+router.put('/cards/:cardId/likes', addCardLike);
 
-router.delete('/cards/:cardId/likes', jsonParser, removeCardLike);
+router.delete('/cards/:cardId/likes', removeCardLike);
 
 module.exports = router;

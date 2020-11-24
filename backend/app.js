@@ -14,10 +14,13 @@ const getCards = require('./routes/cards');
 const getUser = require('./routes/users');
 const NotFoundError = require('./errors/not-found-error');
 
-const corsOption = {
-  origin: '*',
-  optionsSuccessStatus: 200,
-};
+// an array of allowed domains
+const allowedCors = [
+  'https://danny-demosi.students.nomoreparties.site',
+  'http://www.danny-demosi.students.nomoreparties.site',
+  'localhost:3000',
+  'localhost:3001',
+];
 
 // connect to db
 mongoose.connect('mongodb://localhost:27017/aroundb', {
@@ -32,20 +35,37 @@ const { PORT = 3000 } = process.env;
 
 const app = express();
 
-app.use(jsonParser, cors(corsOption));
 app.use(requestLogger);
 
-app.options('*', cors());
+app.use(express.json(), cors());
+
+// app.use((req, res, next) => {
+//   const { origin } = req.headers; // assign the corresponding header to the origin variable
+
+//   if (allowedCors.includes(origin)) { // check that the origin value is among the allowed domains
+//     res.header('Access-Control-Allow-Origin', origin);
+//   }
+
+//   next();
+// });
+
+// app.options('*', cors());
 
 // ROUTES
 
-app.post('/signin', jsonParser, login);
+app.get('/crash-test', () => {
+  setTimeout(() => {
+    throw new Error('Server will crash now');
+  }, 0);
+});
 
-app.post('/signup', jsonParser, createUser);
+app.post('/signin', login);
 
-app.use('/', auth, getCards);
+app.post('/signup', createUser);
 
-app.use('/', auth, getUser);
+app.use('/', getCards);
+
+app.use('/', getUser);
 
 // catch all unmatched routes
 

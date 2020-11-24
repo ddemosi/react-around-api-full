@@ -3,29 +3,17 @@ const bodyParser = require('body-parser');
 const {
   getUsers, getUserById, updateUserAvatar, updateUserInfo, getCurrentUserInfo,
 } = require('../controllers/users');
+const auth = require('../middlewares/auth');
 
-const jsonParser = bodyParser.json();
+// const jsonParser = bodyParser.json();
+router.get('/users/me', auth, getCurrentUserInfo);
 
-router.get('/users', getUsers);
+router.get('/users', auth, getUsers);
 
-router.get('/users/:id', getUserById);
+router.get('/users/:id', auth, getUserById);
 
-router.get('users/me', getCurrentUserInfo);
+router.patch('/users/me', auth, updateUserInfo);
 
-router.patch('/users/me', jsonParser, updateUserInfo);
-
-router.patch('/users/me/avatar', jsonParser, updateUserAvatar);
-
-router.use((err, req, res, next) => {
-  if (err.status === 404) {
-    return res.status(400).render('404');
-  }
-
-  if (err.status === 500) {
-    return res.status(500).render('500');
-  }
-
-  return next();
-});
+router.patch('/users/me/avatar', auth, updateUserAvatar);
 
 module.exports = router;

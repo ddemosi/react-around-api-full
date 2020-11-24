@@ -9,6 +9,7 @@ class Auth {
     _checkResponse (res) {
         return (res.ok ? res.json() : Promise.reject(`Error: ${res.status}`));
     }
+
     getUserInfo () {
         return fetch(`${this._apiEndpoint}/users/me`, {
             headers: this._headers,
@@ -45,8 +46,8 @@ class Auth {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${jwt}`
-            }
+                "Authorization": `Bearer ${jwt}`,
+            },
         })
     }
     
