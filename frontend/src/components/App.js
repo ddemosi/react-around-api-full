@@ -52,7 +52,7 @@ function App () {
 
     // API initialization
     const api = new Api({
-        url: "http://localhost:3000",
+        url: "http://api.danny-demosi.students.nomoreparties.site",
         headers: {
             authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',
