@@ -1,9 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 const cors = require('cors');
+const { celebrate, Joi } = require('celebrate');
 
-const jsonParser = bodyParser.json();
 const {
   login, createUser,
 } = require('./controllers/users');
@@ -39,17 +38,17 @@ app.use(requestLogger);
 
 app.use(express.json(), cors());
 
-// app.use((req, res, next) => {
-//   const { origin } = req.headers; // assign the corresponding header to the origin variable
+app.use((req, res, next) => {
+  const { origin } = req.headers; // assign the corresponding header to the origin variable
 
-//   if (allowedCors.includes(origin)) { // check that the origin value is among the allowed domains
-//     res.header('Access-Control-Allow-Origin', origin);
-//   }
+  if (allowedCors.includes(origin)) { // check that the origin value is among the allowed domains
+    res.header('Access-Control-Allow-Origin', origin);
+  }
 
-//   next();
-// });
+  next();
+});
 
-// app.options('*', cors());
+app.options('*', cors());
 
 // ROUTES
 
@@ -59,9 +58,32 @@ app.get('/crash-test', () => {
   }, 0);
 });
 
-app.post('/signin', login);
+app.post(
+  '/signin',
+  celebrate({
+    body: Joi.object().keys({
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+    }),
+  }),
+  login,
+);
 
-app.post('/signup', createUser);
+app.post(
+  '/signup',
+  celebrate({
+    body: Joi.object().keys({
+      name: Joi.string().min(2).max(30),
+      about: Joi.string().min(2).max(30),
+      avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
+      email: Joi.string().required().email(),
+      password: Joi.string().required(),
+    }),
+  }),
+  createUser,
+);
+
+app.use(auth);
 
 app.use('/', getCards);
 

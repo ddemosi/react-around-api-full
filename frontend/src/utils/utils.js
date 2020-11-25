@@ -25,23 +25,19 @@
 // const removeCardID = document.querySelector('.form__card-id');
 // //api data
 const apiEndpointsCards = {
-  // url: "http://api.danny-demosi.students.nomoreparties.site",
-  url: "http://localhost:3000",
+  url: "http://api.danny-demosi.students.nomoreparties.site",
+  // url: "http://localhost:3000",
     headers: { 
-      // authorization: "98dd8ac9-99ea-4ab0-85f9-6d61f9934e14",
      "Content-Type": "application/json"
      }
 }
 
 const apiEndpointsRegister = {
-  // url:"http://api.danny-demosi.students.nomoreparties.site",
-  url: "http://localhost:3000",
+  url:"http://api.danny-demosi.students.nomoreparties.site",
   headers:{
     "Content-Type": "application/json",
   },
 }
-
-const myId = "747ab9509999074a8ccb0d68"
 
 //default validation config
 
@@ -65,4 +61,4 @@ const myId = "747ab9509999074a8ccb0d68"
 //     }
 //    }
 
-export { apiEndpointsCards, apiEndpointsRegister, myId};
+export { apiEndpointsCards, apiEndpointsRegister};

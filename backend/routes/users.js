@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const bodyParser = require('body-parser');
 const {
   getUsers, getUserById, updateUserAvatar, updateUserInfo, getCurrentUserInfo,
 } = require('../controllers/users');

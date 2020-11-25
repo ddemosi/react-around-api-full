@@ -6,6 +6,8 @@ function Header(props){
 
     function removeJWT() {
         localStorage.removeItem('token');
+        localStorage.removeItem('email');
+        props.toggleLoggedIn(false);
         props.setEmail("");
         window.location.reload();
         return

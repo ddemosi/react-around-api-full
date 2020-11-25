@@ -43,6 +43,13 @@ function App () {
     // Project 15 states
     const [token, setToken] = useState("");
 
+    // if token is in localStorage, set token state
+    useEffect(() => {
+        if (localStorage.getItem('token')) {
+            setToken(localStorage.getItem('token'));
+        }
+    }, [token]);
+
     // API initialization
     const api = new Api({
         url: "http://localhost:3000",
@@ -67,8 +74,8 @@ function App () {
                         return Promise.reject(new Error('Invalid token'));
                     } else {
                         toggleLoggedIn(true);
-                        setEmail(localStorage.getItem('email'));
                         setToken(localStorage.getItem('token'));
+                        setEmail(localStorage.getItem('email'));
                     }
                 })
                 .catch((err) => {
@@ -77,12 +84,12 @@ function App () {
         } else {
             return
         }
-    }, []);
+    }, [isLoggedIn]);
 
     // Project 14 new functions
     // API request for login
 
-    function loginRequest(email, password) {
+    function loginRequest (email, password) {
         authApi.signIn(email, password)
             .then((res) => {
                 if (res.status === 400) {
@@ -91,6 +98,7 @@ function App () {
                     return Promise.reject(new Error('Could not find a user with that email'))
                 } else {
                     toggleLoggedIn(true);
+                    setToken(res.token);
                     return res;
                 }
             })
@@ -100,7 +108,7 @@ function App () {
                 localStorage.setItem('token', data.token);
                 setToken(data.token);
             })
-                .then()
+            .then()
             .catch((err) => {
                 console.log(err);
             })
@@ -108,7 +116,7 @@ function App () {
 
     // API request for register
 
-    function registerRequest(email, password) {
+    function registerRequest (email, password) {
         authApi.signUp(email, password)
             .then((res) => {
                 if (res.status === 400) {
@@ -122,6 +130,13 @@ function App () {
             })
             .then((data) => {
                 setEmail(data.email);
+                setCurrentInfo({
+                    name: data.name,
+                    about: data.about,
+                    avatar: data.avatar,
+                    _id: data._id
+                });
+                setToken(data.token);
             })
             .catch((err) => {
                 console.log(err);
@@ -174,13 +189,13 @@ function App () {
     function onAddPlace (name, link) {
         toggleSaveText(true);
         api.addCard({ name: name, link: link }).then((card) => {
-            console.log(card);
+            // console.log(card);
             const newCard = {
                 name: card.name,
                 link: card.link,
                 likes: card.likes,
                 id: card._id,
-                ownerId: card.owner._id,
+                ownerId: card.owner,
             }
             setCards([...cards, newCard]);
         }).then(() => {
@@ -211,14 +226,16 @@ function App () {
     function handleDeleteClick (cardId) {
         setConfirmDeleteId(cardId);
         toggleConfirmDelete(true);
-
     }
     function handleCardClick (link, name) {
         setSelectedCard({ link: link, name: name, isOpen: true });
     }
     function handleCardLike (cardLikes, cardId) {
         // Check one more time if this card was already liked
-        const isLiked = cardLikes.some(i => i._id === currentUser._id);
+        let isLiked = cardLikes.some(i => {
+            const newI = i.replace(/^\s+|\s+$/gm, '')
+            return newI === currentUser._id
+        });
         // Send a request to the API and getting the updated card data
         api.changeLikeCardStatus(cardId, !isLiked).then((card) => {
             const newCard = {
@@ -226,11 +243,16 @@ function App () {
                 link: card.link,
                 likes: card.likes,
                 id: card._id,
-                ownerId: card.owner._id
+                ownerId: card.owner
             }
             // Create a new array based on the existing one and putting a new card into it
-            const newCards = cards.map((c) => c.id === cardId ? newCard : c);
+            const newCards = cards.map((c) => {
+                const newC = c.id.replace(/^\s+|\s+$/gm, '')
+                return newC === cardId ? newCard : c
+            })
             // Update the state
+            return newCards;
+        }).then((newCards) => {
             setCards(newCards);
         })
             .catch(err => console.log(err));
@@ -274,34 +296,34 @@ function App () {
 
     //API request for User Info
     useEffect(() => {
-        api.getUserInfo().then((res) => {
-            const currentInfo = {
-                name: res.name,
-                about: res.about,
-                avatar: res.avatar,
-                _id: res._id
-            }
-            setCurrentInfo(currentInfo);
-            return currentInfo
-        }).then((info) => {
-
-            api.getCardList().then((res) => {
-                setCards(res.map((card) => {
-                    return {
-                        name: card.name,
-                        link: card.link,
-                        likes: card.likes,
-                        id: card._id,
-                        ownerId: card.owner._id,
-                        myId: info._id
-                    }
-                }))
+        if (token) {
+            api.getUserInfo().then((res) => {
+                const currentInfo = {
+                    name: res.name,
+                    about: res.about,
+                    avatar: res.avatar,
+                    _id: res._id
+                }
+                setCurrentInfo(currentInfo);
+                return currentInfo
+            }).then((info) => {
+                api.getCardList().then((res) => {
+                    setCards(res.map((card) => {
+                        return {
+                            name: card.name,
+                            link: card.link,
+                            likes: card.likes,
+                            id: card._id,
+                            ownerId: card.owner,
+                            myId: info._id
+                        }
+                    }))
+                })
+                    .catch(err => console.log(err))
             })
                 .catch(err => console.log(err))
-        })
-            .catch(err => console.log(err))
-
-    }, [])
+        }
+    }, [email, token])
 
     return (
         <CurrentUserContext.Provider value={currentUser}>
@@ -315,7 +337,9 @@ function App () {
                                     email={email}
                                     setEmail={setEmail}
                                     hamburger={hamburger}
-                                    toggleHamburgerState={toggleHamburgerState} />
+                                    toggleHamburgerState={toggleHamburgerState}
+                                    toggleLoggedIn={toggleLoggedIn}
+                                />
                                 <ProtectedRoute
                                     component={Main}
                                     isLoggedIn={isLoggedIn}

@@ -30,14 +30,17 @@ function createCard(req, res, next) {
 
 function deleteCard(req, res, next) {
   const id = req.params.cardId;
-  Card.findByIdAndRemove(id)
+
+  Card.findById(id)
     .then((card) => {
-      if (card.owner !== req.user._id) {
-        throw new AuthorizationRequiredError('Authorization required for this action');
+      if (String(card.owner) === req.user._id) {
+        Card.findByIdAndRemove(id, () => {
+          res.status(200).send({ message: 'Card deleted' });
+        });
       } else if (req.params.id === undefined) {
         throw new NotFoundError('Could not find a card with that id');
       } else {
-        res.status(200).send({ message: 'Card deleted' });
+        throw new AuthorizationRequiredError('Authorization required for this action');
       }
     })
     .catch(next);
@@ -46,9 +49,9 @@ function deleteCard(req, res, next) {
 function addCardLike(req, res, next) {
   const id = req.params.cardId;
   const user = req.user._id;
-  Card.findByIdAndUpdate(id, { $addToSet: { likes: user } })
-    .then(() => {
-      res.status(200).send({ message: 'Like added' });
+  Card.findByIdAndUpdate(id, { $addToSet: { likes: user } }, { new: true })
+    .then((card) => {
+      res.status(200).send(card);
     })
     .catch(next);
 }
@@ -56,9 +59,9 @@ function addCardLike(req, res, next) {
 function removeCardLike(req, res, next) {
   const id = req.params.cardId;
   const user = req.user._id;
-  Card.findByIdAndUpdate(id, { $pull: { likes: user } })
-    .then(() => {
-      res.status(200).send({ message: 'Like removed' });
+  Card.findByIdAndUpdate(id, { $pull: { likes: user } }, { new: true })
+    .then((card) => {
+      res.status(200).send(card);
     })
     .catch(next);
 }

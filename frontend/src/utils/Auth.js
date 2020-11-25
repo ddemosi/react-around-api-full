@@ -49,6 +49,9 @@ class Auth {
                 "Authorization": `Bearer ${jwt}`,
             },
         })
+            .then((res) => {
+                return this._checkResponse(res);
+            })
     }
     
 }

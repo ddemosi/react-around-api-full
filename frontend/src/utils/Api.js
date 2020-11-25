@@ -1,5 +1,3 @@
-import { apiEndpointsCards } from "./utils.js";
-
 class Api {
   constructor(endpoint) {
     this._apiEndpoint = endpoint.url;

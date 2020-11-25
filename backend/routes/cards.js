@@ -1,5 +1,4 @@
 const router = require('express').Router();
-const bodyParser = require('body-parser');
 const {
   getCards, createCard, deleteCard, addCardLike, removeCardLike,
 } = require('../controllers/cards');
@@ -12,8 +11,8 @@ router.post('/cards', createCard);
 
 router.delete('/cards/:cardId', deleteCard);
 
-router.put('/cards/:cardId/likes', addCardLike);
+router.put('/cards/likes/:cardId', addCardLike);
 
-router.delete('/cards/:cardId/likes', removeCardLike);
+router.delete('/cards/likes/:cardId', removeCardLike);
 
 module.exports = router;

@@ -54,7 +54,14 @@ function createUser(req, res, next) {
           if (!result) {
             throw new BadRequestError('Invalid data submitted');
           }
-          res.status(200).send({ data: result });
+          const token = jwt.sign(
+            { _id: result._id },
+            NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
+          );
+
+          const newObj = { token, ...result.toObject() };
+
+          res.status(200).send({ data: newObj });
         })
         .catch(next);
     })
@@ -113,10 +120,6 @@ function login(req, res, next) {
         { _id: user._id },
         NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
       );
-      res.cookie('jwt', token, {
-        maxAge: 3600000 * 24 * 7,
-        httpOnly: true,
-      });
       res.status(200).send({ token });
     })
     .catch(next);
