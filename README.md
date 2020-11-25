@@ -10,3 +10,4 @@ Draft 1:
 * Postman is my friend.
 
 Link to live site: http://danny-demosi.students.nomoreparties.site
+Server public IP: 52.250.0.223
