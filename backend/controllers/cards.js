@@ -1,8 +1,8 @@
 const Card = require('../models/card.js');
 
-const AuthorizationRequiredError = require('../errors/authorization-required-error');
 const NotFoundError = require('../errors/not-found-error');
 const BadRequestError = require('../errors/bad-request-error.js');
+const AccessDeniedError = require('../errors/access-denied-error.js');
 
 const getCards = (req, res, next) => Card.find({})
   .then((cards) => {
@@ -40,7 +40,7 @@ function deleteCard(req, res, next) {
       } else if (req.params.id === undefined) {
         throw new NotFoundError('Could not find a card with that id');
       } else {
-        throw new AuthorizationRequiredError('Authorization required for this action');
+        throw new AccessDeniedError('Authorization required for this action');
       }
     })
     .catch(next);

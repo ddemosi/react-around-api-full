@@ -6,7 +6,6 @@ const { celebrate, Joi } = require('celebrate');
 const {
   login, createUser,
 } = require('./controllers/users');
-const auth = require('./middlewares/auth');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
 // route imports
 const getCards = require('./routes/cards');
@@ -62,11 +61,14 @@ app.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
+      // name: Joi.string().min(2).max(30),
+      // about: Joi.string().min(2).max(30),
+      // avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
   }),
-  login,
+  login
 );
 
 app.post(
@@ -77,13 +79,13 @@ app.post(
       about: Joi.string().min(2).max(30),
       avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
       email: Joi.string().required().email(),
-      password: Joi.string().required(),
+      password: Joi.string().required().pattern(new RegExp(/^[a-zA-Z0-9]*$/)),
     }),
   }),
-  createUser,
+  createUser
 );
 
-app.use(auth);
+// app.use(auth);
 
 app.use('/', getCards);
 
@@ -96,14 +98,17 @@ app.use('*', () => {
 });
 
 app.use(errorLogger);
-app.use((err, req, res) => {
-  if (err.statusCode === undefined) {
+app.use((err, req, res, next) => {
+  if (err.name === 'MongoError' && err.code === 11000) {
+    res.status(409).send({ message: 'Email already exists' });
+  } else if (err.statusCode === undefined) {
     const { statusCode = 500, message } = err;
     res.status(statusCode).send({
       message: statusCode === 500 ? 'Internal server error' : message,
     });
   } else {
-    res.status(err.statusCode).send({ message: err.message });
+    const { statusCode, message } = err;
+    res.status(statusCode).send({ message });
   }
 });
 
