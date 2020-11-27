@@ -16,8 +16,6 @@ const NotFoundError = require('./errors/not-found-error');
 const allowedCors = [
   'https://danny-demosi.students.nomoreparties.site',
   'http://www.danny-demosi.students.nomoreparties.site',
-  'localhost:3000',
-  'localhost:3001',
 ];
 
 // connect to db

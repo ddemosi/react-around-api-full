@@ -33,8 +33,8 @@ const apiEndpointsCards = {
 }
 
 const apiEndpointsRegister = {
-  // url:"http://api.danny-demosi.students.nomoreparties.site",
-  url: 'http://localhost:3000',
+  url:"http://api.danny-demosi.students.nomoreparties.site",
+  // url: 'http://localhost:3000',
   headers:{
     "Content-Type": "application/json",
   },
