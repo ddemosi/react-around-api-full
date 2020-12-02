@@ -1,7 +1,8 @@
+/* eslint-disable no-useless-escape */
 const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
-const { celebrate, Joi } = require('celebrate');
+const { celebrate, Joi, errors } = require('celebrate');
 
 const {
   login, createUser,
@@ -59,14 +60,11 @@ app.post(
   '/signin',
   celebrate({
     body: Joi.object().keys({
-      // name: Joi.string().min(2).max(30),
-      // about: Joi.string().min(2).max(30),
-      // avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
       email: Joi.string().required().email(),
       password: Joi.string().required(),
     }),
   }),
-  login
+  login,
 );
 
 app.post(
@@ -75,12 +73,12 @@ app.post(
     body: Joi.object().keys({
       name: Joi.string().min(2).max(30),
       about: Joi.string().min(2).max(30),
-      avatar: Joi.string().uri({ scheme: ['http', 'https'] }),
+      avatar: Joi.string().pattern(new RegExp(/^(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/)),
       email: Joi.string().required().email(),
-      password: Joi.string().required().pattern(new RegExp(/^[a-zA-Z0-9]*$/)),
+      password: Joi.string().required().pattern(new RegExp(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/)),
     }),
   }),
-  createUser
+  createUser,
 );
 
 // app.use(auth);
@@ -96,6 +94,10 @@ app.use('*', () => {
 });
 
 app.use(errorLogger);
+
+app.use(errors());
+
+// eslint-disable-next-line no-unused-vars
 app.use((err, req, res, next) => {
   if (err.name === 'MongoError' && err.code === 11000) {
     res.status(409).send({ message: 'Email already exists' });

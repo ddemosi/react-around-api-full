@@ -35,7 +35,7 @@ function getUserById(req, res, next) {
     .catch(next);
 }
 
-function createUser(err, req, res, next) {
+function createUser(req, res, next) {
   bcrypt.hash(req.body.password, 10)
     .then((hash) => {
       const body = {
@@ -45,10 +45,6 @@ function createUser(err, req, res, next) {
         email: req.body.email,
         password: hash,
       };
-
-      if (err) {
-        throw new BadRequestError('Email or password is not in proper format');
-      }
 
       if (!isEmail(req.body.email)) {
         throw new BadRequestError('Email is not in proper format');
