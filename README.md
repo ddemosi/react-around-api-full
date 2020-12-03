@@ -23,5 +23,10 @@ Draft 3:
 * Substituted built in .uri() Joi validators for a similar Regex to the one used by validator.js. Seemed like the simpler solution over creating a whole new helper file structure just to use the validator package.
 * Fixed linting errors. Primary error had to do with the error handling middleware and a comma recommendation that was breaking functionality. Added all to the temporary ignore list.
 
+Draft 4:
+
+* Corrected response from user creation to not include hashed password.
+* Added proper error handling to card delete function.
+
 Link to live site: http://danny-demosi.students.nomoreparties.site
 Server public IP: 52.250.0.223

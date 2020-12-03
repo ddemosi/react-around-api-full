@@ -33,6 +33,9 @@ function deleteCard(req, res, next) {
 
   Card.findById(id)
     .then((card) => {
+      if(!card) {
+        throw new NotFoundError('Could not find a card with that id');
+      }
       if (String(card.owner) === req.user._id) {
         Card.findByIdAndRemove(id, () => {
           res.status(200).send({ message: 'Card deleted' });

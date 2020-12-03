@@ -60,7 +60,13 @@ function createUser(req, res, next) {
             NODE_ENV === 'production' ? JWT_SECRET : 'dev-secret', { expiresIn: '7d' },
           );
 
-          const newObj = { token, ...result.toObject() };
+          const newObj = { 
+            token, 
+            email: result.email,
+            name: result.name,
+            about: result.about,
+            avatar: result.avatar,
+           };
 
           res.status(200).send({ data: newObj });
         })
