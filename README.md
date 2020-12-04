@@ -28,5 +28,9 @@ Draft 4:
 * Corrected response from user creation to not include hashed password.
 * Added proper error handling to card delete function.
 
+Draft 5: 
+
+* Fixed misc linting errors
+
 Link to live site: http://danny-demosi.students.nomoreparties.site
 Server public IP: 52.250.0.223

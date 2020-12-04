@@ -33,7 +33,7 @@ function deleteCard(req, res, next) {
 
   Card.findById(id)
     .then((card) => {
-      if(!card) {
+      if (!card) {
         throw new NotFoundError('Could not find a card with that id');
       }
       if (String(card.owner) === req.user._id) {
