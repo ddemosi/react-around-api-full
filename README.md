@@ -7,10 +7,13 @@ This application features user authentication through popular and highly scalabl
 
 It also features responsive design and a hamburger icon with a mobile navigation menu.
 
-Mobile closed:
-![Mobile closed](./around-mobile.PNG)
-Mobile open:
-![Mobile open](./around-mobile-open.PNG)
+Mobile closed:  
+
+![Mobile closed](./around-mobile.PNG =250x)  
+
+Mobile open:  
+
+![Mobile open](./around-mobile-open.PNG =250x) 
 
 
 ## Installation
