@@ -1,7 +1,7 @@
 # Around the US!
 > A portfolio project featuring user authentication
 
-This application features user authentication through popular and highly scalable "token authentication" through localStorage. Users can create cards and add public images, which will be stored on a custom configured server hosted on AWS Lightsail. Users can also like cards, remove likes, delete cards, and edit their own profile details.
+This application features user authentication through popular and highly scalable "token authentication" through localStorage. Users can create cards and add public images, which are stored on a custom configured server hosted on AWS Lightsail. Users can also like cards, remove likes, delete cards, and edit their own profile details.
 
 ![A photo of the UI](./around-dashboard.PNG)
 
@@ -45,11 +45,11 @@ npm run start
 
 ## Development setup
 
-THIS IS THE DEVELOPMENT VERSION (NOT COMPILED). PRODUCTION BUILD IS ON THE "deployment-branch". Only difference is that the FETCH requests are directed at localhost rather than the remote server. Remote server will reject any requests made from localhost as part of it's CORS policy.
+THIS IS THE DEVELOPMENT VERSION (NOT COMPILED). PRODUCTION BUILD IS ON THE "deployment-branch". Only difference is that the FETCH requests are directed at localhost rather than the remote server. Remote server will reject any requests made from localhost as part of its CORS policy.
 
 
 ## Meta
 
-Daniel Gummow (dannydemosi) – [@YourLinkedIn](https://www.linkedin.com/in/daniel-gummow-223043186/) – rdgummow@gmail.com
+Daniel Gummow (dannydemosi) – [@LinkedIn](https://www.linkedin.com/in/daniel-gummow-223043186/) – rdgummow@gmail.com
 
-[https://github.com/ddemosi/](https://github.com/ddemosi/)
+[Github](https://github.com/ddemosi/)
