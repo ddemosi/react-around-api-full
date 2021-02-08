@@ -1,36 +1,52 @@
-# Project 15: React with full API!
+# Around the US!
+> A portfolio project featuring user authentication
 
-Almost there:
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Downloads Stats][npm-downloads]][npm-url]
 
-Draft 1:
+This application features user authentication through popular and highly scalable "token authentication" through localStorage. Users can create cards and add public images, which will be stored on a custom configured server hosted on AWS Lightsail. Users can also like cards, remove likes, delete cards, and edit their own profile details.
 
-* Organization is a bit of a mess. Takes a while to read.
-* Haven't tested on the live server yet, so we'll see how this goes.
-* Error handling could be cleaner, and I have yet to test every possible type of error. Yay for bug fixing.
-* Postman is my friend.
+![](around-dashboard.png)
 
-Draft 2:
+It also features responsive design and a hamburger icon with a mobile navigation menu.
 
-* Fixed message issues with central error handling.
-* Added Celebrate validation to all routes.
-* Added RegEx to password fields.
-* Added error handling for MongoErrors and Celebrate errors
-* Moved logs to an auto-generated log folder
+![](around-mobile.png)
 
-Draft 3:
+## Installation
 
-* Turns out when you add the "err" variable, that turns a function into "error handling middleware", which was breaking the /signup route. Any issues with /signup should be resolved.
-* Substituted built in .uri() Joi validators for a similar Regex to the one used by validator.js. Seemed like the simpler solution over creating a whole new helper file structure just to use the validator package.
-* Fixed linting errors. Primary error had to do with the error handling middleware and a comma recommendation that was breaking functionality. Added all to the temporary ignore list.
+After clone, make sure you have node.js installed. Then navigate to the backend directory and run:
 
-Draft 4:
+```sh
+npm install
+```
 
-* Corrected response from user creation to not include hashed password.
-* Added proper error handling to card delete function.
+Then run:
 
-Draft 5: 
+```sh
+node app
+```
 
-* Fixed misc linting errors
+Navigate to the front end directory. Run:
 
-Link to live site: http://danny-demosi.students.nomoreparties.site
-Server public IP: 52.250.0.223
+```sh
+npm install
+```
+
+Then:
+
+```sh
+npm run start
+```
+
+
+## Development setup
+
+THIS IS THE DEVELOPMENT VERSION (NOT COMPILED). PRODUCTION BUILD IS ON THE "deployment-branch". Only difference is that the FETCH requests are directed at localhost rather than the remote server. Remote server will reject any requests made from localhost as part of it's CORS policy.
+
+
+## Meta
+
+Daniel Gummow (dannydemosi) – [@YourLinkedIn](https://www.linkedin.com/in/daniel-gummow-223043186/) – rdgummow@gmail.com
+
+[https://github.com/ddemosi/](https://github.com/ddemosi/)
