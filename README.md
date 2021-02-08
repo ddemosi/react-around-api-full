@@ -9,11 +9,11 @@ It also features responsive design and a hamburger icon with a mobile navigation
 
 Mobile closed:  
 
-![Mobile closed](./around-mobile.PNG =250x)  
+<img src="./around-mobile.PNG" alt="Mobile closed" width="250"/>
 
 Mobile open:  
 
-![Mobile open](./around-mobile-open.PNG =250x) 
+<img src="./around-mobile-open.PNG" alt="Mobile open" width="250"/>
 
 
 ## Installation
