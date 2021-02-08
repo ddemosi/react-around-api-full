@@ -1,6 +1,8 @@
 # Around the US!
 > A portfolio project featuring user authentication
 
+Link to live site: "http://danny-around-react.students.nomoreparties.site"
+
 This application features user authentication through popular and highly scalable "token authentication" through localStorage. Users can create cards and add public images, which are stored on a custom configured server hosted on AWS Lightsail. Users can also like cards, remove likes, delete cards, and edit their own profile details.
 
 ![A photo of the UI](./around-dashboard.PNG)
