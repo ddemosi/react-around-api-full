@@ -52,8 +52,8 @@ function App () {
 
     // API initialization
     const api = new Api({
-        // url: "http://api.danny-demosi.students.nomoreparties.site",
-        url: "localhost:3000",
+        url: "https://api.danny-around-react.students.nomoreparties.site",
+        // url: "localhost:3000",
         headers: {
             authorization: `Bearer ${token}`,
             'Content-Type': 'application/json',

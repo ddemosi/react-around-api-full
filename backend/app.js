@@ -15,8 +15,9 @@ const NotFoundError = require('./errors/not-found-error');
 
 // an array of allowed domains
 const allowedCors = [
-  'https://danny-demosi.students.nomoreparties.site',
-  'http://www.danny-demosi.students.nomoreparties.site',
+  'https://danny-around-react.students.nomoreparties.site',
+  'http://www.danny-around-react.students.nomoreparties.site',
+  'localhost:3000',
 ];
 
 // connect to db
