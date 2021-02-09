@@ -49,6 +49,12 @@ npm run start
 
 THIS IS THE DEVELOPMENT VERSION (NOT COMPILED). PRODUCTION BUILD IS ON THE "deployment-branch". Only difference is that the FETCH requests are directed at localhost rather than the remote server. Remote server will reject any requests made from localhost as part of its CORS policy.
 
+## NOTE:
+
+DO NOT REGISTER USING ANY SENSITIVE DATA
+
+This is a portfolio project built for demonstration purposes only and is NOT secured. By default, the server allows all requests from localhost:3000, so anyone with an active development server can access it.
+
 
 ## Meta
 
